@@ -1,0 +1,54 @@
+import { expect } from "chai";
+import hre from "hardhat";
+
+
+it("Should mint and vote", async function () {
+  const Voting = await hre.ethers.getContractFactory("VotingSystem");
+  const voting = await Voting.deploy();
+  await voting.waitForDeployment();
+
+
+  const [owner, Aziz,SHROOG,HALAH,YAHYA, notVoter] = await hre.ethers.getSigners();
+
+  
+  
+      voting.mint(owner.address, 100),
+      voting.mint(Aziz.address, 100),
+      voting.mint(notVoter.address, 100),
+      voting.mint(SHROOG.address, 100),
+      voting.mint(HALAH.address, 100),
+      voting.mint(YAHYA.address,100),
+   
+      voting.connect(owner).submitProposal("Proposal0"),
+      voting.connect(Aziz).submitProposal("Proposal1"),
+      voting.connect(notVoter).submitProposal("Proposal2"),
+      voting.connect(SHROOG).submitProposal("Proposal3"),
+      voting.connect(HALAH).submitProposal("Proposal4"),
+      voting.connect(YAHYA).submitProposal("Proposal5"),
+    
+ 
+
+  it("Should mint and vote", async function () {
+    
+    await voting.connect(owner).vote(0, true);
+    await voting.connect(Aziz).vote(1, false);
+    await voting.connect(SHROOG).vote(1 ,false);
+    await voting.connect(HALAH).vote(0, true);
+    await voting.connect(YAHYA).vote(1, false);
+
+
+    const proposal1 = await voting.proposals(1);
+    const proposal2 = await voting.proposals(2);
+    const proposal3 = await voting.proposals(3);
+    const proposal4 = await voting.proposals(4);
+    const proposal5 = await voting.proposals(5);
+
+    expect(proposal1.yesVotes).to.equal(1);
+    expect(proposal1.noVotes).to.equal(0);
+    expect(proposal2.yesVotes).to.equal(0);
+    expect(proposal2.noVotes).to.equal(1);
+    
+  });
+
+  
+});
